@@ -1,0 +1,29 @@
+<div class="container">
+<div class="banner">
+   <h2>Nueva Zona</h2>
+</div>
+
+<%= render 'form', zone: @zone %>
+
+
+  <div class="banner"> 
+
+	<div class="row">
+		<div class="col-md-9 col-sm-9 col-xs-9"> 
+
+			<button  id="guardarDatosZona" class="btn btn-default pull-right">Guardar Zona</button>
+			<button id="btnmarcar" class="btn btn-default pull-right">Marcar zona</button>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+$('#btnmarcar').attr("disabled", true);
+$('#guardarDatosZona').attr("disabled", true);
+  createMapZone();
+</script>
+
+<%= link_to 'Back', zones_path %>
+
+ 
+
+</div>

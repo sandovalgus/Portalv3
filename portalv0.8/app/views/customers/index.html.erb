@@ -1,0 +1,65 @@
+
+<div class="container">
+
+<div class="banner">
+   <h2>Clientes</h2>
+</div>
+
+                                                                                  
+    <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Num. de Socio</th>
+        <th>Apellido - Nombre</th>
+        <th>Dirección</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      
+      </tr>
+    </thead>
+    <tbody>
+    <%= will_paginate @customers %>  
+    <% @customers.each do |customer| %>
+      <tr>
+        <td><%= customer.n_socio %></td>
+        <td><%= customer.apellido %>, <%= customer.nombre %></td>
+        <% customer.addresses.each do |direccion| %>
+          <% if (direccion.address)%>
+             <td><%= direccion.address %></td>
+          <%end%>
+        <%end%>
+        <td>status</td>
+        <td>
+
+            <%= link_to '<i class="fa fa-eye" ></i>'.html_safe, customer_path(customer), class: "btn btn-default btn-view"  %>
+
+            <%= link_to '<i class="fa fa-pencil" ></i>'.html_safe, edit_customer_path(customer), class: "btn btn-default btn-edit"  %>
+
+             <%= link_to '<i class="fa fa-trash-o" ></i>'.html_safe,  customer, method: :delete, data: { confirm: 'Seguro que desea eliminar el cliente?' }, class: "btn btn-default btn-delete"  %>
+                
+        </td>
+
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+  <%= will_paginate @customers %> 
+  <div class="row">          
+ 
+    <div class="map-system animated fadeOut map-system-down">
+        <div id="map" class="map"></div>
+    </div> 
+
+  </div>
+
+</div>
+
+
+
+<script type="text/javascript">
+  createMap(<%=raw @map_hash.to_json %>, 1);
+</script>
+
+
+
+

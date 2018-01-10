@@ -1,0 +1,476 @@
+//var map = new google.maps.Map(document.getElementById('map'));
+  var area = [];
+  var markersCount = 0;
+  markers = [];
+  var poligonoArea;
+  var dibujado = false;
+  var handler = Gmaps.build('Google');
+  var zoom = 11;// zoom del mapa 
+  var areas = [];
+  var ctrlNewZone =0;
+  var flag_edit_markers_zone = 0;// 0 no edit, 1 edit ok
+  var remove_zone_edit = 0;
+ 
+//position central del mapa
+function positionCenter(pos, items){
+  var latlng;
+  if (pos ==2){
+   
+    latlng ={lat: items[0].lat, lng: items[0].lng};
+    zoom=15;
+
+  }else{
+     latlng = {lat: -27.367193930439235, lng: -55.893094539642334};
+  }
+  return latlng;
+}
+
+ // CARGA EL MAPA CON UN SOLO ITEM, ES POSIBLE ARRASTRAR DICHO ITEM, Y MUESTRA LNG Y LAT
+
+function editCustomerMap(items, vista){
+  handler.buildMap({ provider: {gestureHandling: 'greedy'}, internal: {id: 'map'}}, function(){
+    //markers = handler.addMarkers(items);
+    markers = handler.addMarkers(
+      [
+        {
+          "lng": items[0].lng,
+          "lat": items[0].lat,
+        }
+      ]
+    ,{ draggable: true}
+    );
+
+     handler.bounds.extendWith(markers);
+     handler.fitMapToBounds();
+    handler.getMap().setCenter(positionCenter(vista, items));// centra el mapa en lng lat
+    handler.getMap().setZoom(zoom);// zoom map x veces
+     google.maps.event.addListener(markers[0].serviceObject, 'dragend', function() {
+      updateFormLocation(this.getPosition());
+    
+     });
+
+  });
+}
+//Update form attributes with given coordinates
+function updateFormLocation(latLng) {
+   // var latitude = document.getElementById("customer_addresses_attributes_0_latitude");
+   // var longitude = document.getElementById("customer_addresses_attributes_0_longitude");
+    // document.getElementById("customer_addresses_attributes_0_latitude").value() = latLng.lat();
+    // document.getElementById("customer_addresses_attributes_0_longitude").value() = latLng.lng();
+   $('#customer_addresses_attributes_0_latitude').val(latLng.lat());//=latLng.lat();
+   $('#customer_addresses_attributes_0_longitude').val(latLng.lng());//=latLng.lng();
+
+   // latitude.innerHTML=(latLng.lat());
+   // longitude.innerHTML=(latLng.lng());
+
+} 
+
+
+
+function createMap(items, vista){
+  // var handler = Gmaps.build('Google');
+
+  
+  handler.buildMap({ provider: {}, internal: {id: 'map'}}, function(){
+    markers = handler.addMarkers(items);
+    handler.bounds.extendWith(markers);
+    handler.getMap().setCenter(positionCenter(vista, items));// centra el mapa en lng lat
+    handler.getMap().setZoom(zoom);// zoom map x veces
+    //handler.fitMapToBounds();
+// $('button:submit').attr("disabled", true);
+
+
+      google.maps.event.addListener(handler.getMap(), 'click', function( event ){
+        console.log("adListener");
+
+            if (dibujado ==  false) {
+              area.push({ lat: event.latLng.lat(), lng: event.latLng.lng() });
+
+               var newlatlng = { lat: event.latLng.lat(), lng: event.latLng.lng() };
+               console.log(newlatlng);
+                  var newmarker  = handler.addMarkers(
+                [
+                  {
+                    "lng": event.latLng.lng(),
+                    "lat": event.latLng.lat(),
+                  }
+                ]
+              ,{ draggable: true}
+              );
+
+              //markers = handler.addMarkers(items ,{ draggable: true})
+              markers[markersCount] = newmarker;
+              markersCount += 1;
+            } else {
+              alert("Ups! Ya se encuentra creada la zona. Eliminela para volver a dibujar.");
+            }
+      });
+  });
+}
+
+
+
+function initMap(items, vista){
+  // var handler = Gmaps.build('Google');
+
+  
+  handler.buildMap({ provider: {}, internal: {id: 'map'}}, function(){
+    markers = handler.addMarkers(items);
+    handler.bounds.extendWith(markers);
+    handler.getMap().setCenter(positionCenter(vista, items));// centra el mapa en lng lat
+    handler.getMap().setZoom(zoom);// zoom map x veces
+    //handler.fitMapToBounds();
+// $('button:submit').attr("disabled", true);
+
+  });
+}
+
+
+
+//***********************************************
+//*********************ZONAS*********************
+//***********************************************
+
+
+
+document.addEventListener("turbolinks:load", function() {
+//*****************************************************
+//editar zona
+//*****************************************************
+    $("#guardarEdicionZona").click(function(){
+         // alert("The button was clicked.");
+         var nombre_zona = document.getElementById('zone_nombre_zona').value;
+         var color = document.getElementById('zone_color').value;
+         var id = document.getElementById('id').value;
+         var status_edit = flag_edit_markers_zone;
+
+         console.log("id de la zona "+id);
+         $.ajax({
+           url: "/zones/"+id,
+           type: "PATCH",
+           data: {  
+           
+            "nombre_zona":nombre_zona,
+            "color":color,
+            "area": area,
+            "status_z": status_edit
+          },
+           dataType: "json",
+           success: function(data) {
+
+               window.location="/zones"
+             }
+           });
+   });
+//*************************************************************************
+//guardar zona
+//************************************************************************
+    $("#guardarDatosZona").click(function(){
+         // alert("The button was clicked.");
+         var nombre_zona = document.getElementById('zone_nombre_zona').value;
+         var color = document.getElementById('zone_color').value;
+         
+         $.ajax({
+           url: "/zones/",
+           type: "POST",
+           data: {
+            "nombre_zona":nombre_zona,
+            "color":color,
+            "area": area,},
+           dataType: "json",
+           success: function(data) {
+
+               window.location="/zones"
+             }
+           });
+   });
+
+
+  $("#btnmarcar").click(function(){
+     var zoneColor =  $("#zone_color").val();
+   
+
+    if (markersCount >=3 && dibujado == false) {
+    
+
+      poligonoArea = handler.addPolygons({
+        paths: area,
+        strokeColor: '#E7F10F',
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+        fillColor: '#E7F10F',
+        fillOpacity: 0.35
+      });
+
+         handler.bounds.extendWith(poligonoArea);
+
+        dibujado = true;
+         $('#guardarDatosZona').attr("disabled", false);
+        // $('#guardarEdicionZona').attr("disabled", false);
+    
+    }
+
+  });
+
+
+ 
+      $("#borrar").click(function(){
+
+        remove_zone_edit =1;
+        createMapZone();
+        remove_zone_edit =0;
+
+      });
+
+
+
+});
+
+
+// mapeando zonas
+
+function createMapZone(items){       
+
+  dibujado =  false;
+  handler.buildMap({ provider: {}, internal: {id: 'map_zone'}}, function(){
+    //markers = handler.addMarkers(items);
+   // handler.bounds.extendWith(markers);
+    handler.getMap().setCenter(positionCenter(1, 0));// centra el mapa en lng lat
+    handler.getMap().setZoom(zoom);// zoom map x veces
+    //handler.fitMapToBounds();
+    if (items != null && remove_zone_edit==0){
+      drawZone(items);
+    }
+
+      google.maps.event.addListener(handler.getMap(), 'click', function( event ){
+       console.log("toc toc");
+
+            if (dibujado ==  false) {
+              area.push({ lat: event.latLng.lat(), lng: event.latLng.lng() });
+
+               var newlatlng = { lat: event.latLng.lat(), lng: event.latLng.lng() };
+               console.log(newlatlng);
+
+                  var newmarker  = handler.addMarkers(
+                [
+                  {
+                    "lng": event.latLng.lng(),
+                    "lat": event.latLng.lat(),
+                  }
+                ]
+              ,{ draggable: true}
+              );
+              markers[markersCount] = newmarker;
+              markersCount += 1;
+              flag_edit_markers_zone=1;
+
+              console.log("sumando markers "+markersCount);
+              if (markersCount >=3){$('#btnmarcar').attr("disabled", false);}
+            } else {
+              alert("Ups! Ya se encuentra creada la zona. Eliminela para volver a dibujar.");
+            }
+      });
+
+  });
+}
+
+
+
+
+//mostrar tdas las zonas ************
+function drawZone (items){
+var area = [];
+ 
+if (items[0] != undefined) {
+ var mizona = items[0].zone;
+
+   for (var j = 0; j < items.length; j++){
+    if (items[j].zone == mizona){
+      area.push(items[j]);
+    }else if (items[j].zone != undefined ){
+      mizona = items[j].zone;
+     
+      //***** mostrar zona
+      poligonoArea = handler.addPolygons({
+        paths: area,
+        strokeColor: '#FF0000',
+        strokeOpacity: 0.1,
+        strokeWeight: 2,
+        fillColor: '#FF0000',
+        fillOpacity: 0.1
+      });
+    handler.bounds.extendWith(poligonoArea);
+    areas.push(poligonoArea);
+    var area=[];
+     area.push(items[j]);
+
+    }
+ }
+
+}; 
+
+if(j==items.length){
+        poligonoArea = handler.addPolygons({
+        paths: area,
+        strokeColor: '#FF0000',
+        strokeOpacity: 0.1,
+        strokeWeight: 2,
+        fillColor: '#FF0000',
+        fillOpacity: 0.1
+      });
+    handler.bounds.extendWith(poligonoArea);
+
+}
+
+}
+
+
+
+function viewZonesAll(items, vista){
+
+  handler.buildMap({ provider: {}, internal: {id: 'map'}}, function(){
+    // markers = handler.addMarkers(items);
+    // handler.bounds.extendWith(markers);
+    handler.getMap().setCenter(positionCenter(1, 0));// centra el mapa en lng lat
+    handler.getMap().setZoom(zoom);// zoom map x veces
+
+    drawZone(items);
+// var areashow = [];
+//  var mizona = items[0].zone;
+ 
+//  for (var j = 0; j < items.length; j++){
+//     if (items[j].zone == mizona){
+//       areashow.push(items[j]);
+//     }else if (items[j].zone != undefined ){
+//       mizona = items[j].zone;
+     
+//       //***** mostrar zona
+//       poligonoArea = handler.addPolygons({
+//         paths: areashow,
+//         strokeColor: '#FF0000',
+//         strokeOpacity: 0.8,
+//         strokeWeight: 2,
+//         fillColor: '#FF0000',
+//         fillOpacity: 0.35
+//       });
+//     handler.bounds.extendWith(poligonoArea);
+//     areas.push(poligonoArea);
+//     var areashow=[];
+//      areashow.push(items[j]);
+
+//     }
+//  }
+// if(j==items.length){
+//         poligonoArea = handler.addPolygons({
+//         paths: areashow,
+//         strokeColor: '#FF0000',
+//         strokeOpacity: 0.8,
+//         strokeWeight: 2,
+//         fillColor: '#FF0000',
+//         fillOpacity: 0.35
+//       });
+//     handler.bounds.extendWith(poligonoArea);
+
+// }
+  
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//***************************************************************
+//zone and markers
+        function mapsMarkerZones(items,has_zone, vista){
+        // var handler = Gmaps.build('Google');
+
+        handler.buildMap({ provider: {gestureHandling: 'greedy'}, internal: {id: 'map'}}, function(){
+        markers = handler.addMarkers(items);
+        handler.bounds.extendWith(markers);
+        handler.getMap().setCenter(positionCenter(vista, items));// centra el mapa en lng lat
+        handler.getMap().setZoom(zoom);// zoom map x veces
+        //handler.fitMapToBounds();
+
+
+        var areashow = [];
+        var mizona = has_zone[0].zone;
+        var zonaPoly = [];
+
+
+        for (var j = 0; j < has_zone.length; j++){
+        if (has_zone[j].zone == mizona){
+        areashow.push(has_zone[j]);
+        }else if (has_zone[j].zone != undefined ){
+        mizona = has_zone[j].zone;
+
+        //***** mostrar zona
+        poligonoArea = handler.addPolygons({
+        paths: areashow,
+        strokeColor: '#FF0000',
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+        fillColor: '#FF0000',
+        fillOpacity: 0.35
+        });
+        handler.bounds.extendWith(poligonoArea);
+        areas.push(poligonoArea);
+
+        var areashow=[];
+        areashow.push(has_zone[j]);
+
+        }
+        }
+
+        if(j==has_zone.length){
+        poligonoArea = handler.addPolygons({
+        paths: areashow,
+        strokeColor: '#FF0000',
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+        fillColor: '#FF0000',
+        fillOpacity: 0.35
+        });
+        handler.bounds.extendWith(poligonoArea);
+        areas.push(poligonoArea);
+
+        }
+
+
+          var zonaSearch = new google.maps.Polygon({
+            paths: areashow
+          });
+
+    for (var j = 0; j < items.length; j++){
+        var coordinate = new google.maps.LatLng(items[j].lat, items[j].lng);//replace with your lat and lng values
+        // console.log(coordinate);
+
+        var isWithinPolygon = google.maps.geometry.poly.containsLocation(coordinate, zonaSearch)  ?
+        'ADENTRO' :
+        'AFUERA';
+          var info = items[j].infowindow;
+          info = info.split("/", 1);
+          console.log( "El Cliente Numero "+ parseInt(info) + " se encuentra " + isWithinPolygon + " de la zona." );
+
+  
+    }
+
+
+
+        //si el marker cae dentro del poligono ---> color rojo
+
+
+        });
+        }

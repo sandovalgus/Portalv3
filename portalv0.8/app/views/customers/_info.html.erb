@@ -1,0 +1,18 @@
+<div class="card">
+ 
+
+    <h4><i class="fa fa-user-o" aria-hidden="true"></i> <b><%= customer.apellido%>, <%= customer.nombre%></b></h4> 
+    <h4>Socio:<b><%= customer.n_socio%></b></h4> 
+      <strong>Estado:</strong>
+          <% if customer.estado ==1%>
+            <i class="fa fa-circle status_1" aria-hidden="true"></i>
+          <%end%>
+          <% if customer.estado ==2%>
+            <i class="fa fa-circle status_2" aria-hidden="true"></i>
+          <%end%>
+          <% if customer.estado ==3%>
+            <i class="fa fa-circle status_3" aria-hidden="true"></i>
+          <%end%>
+    <p> <i class="fa fa-map-o" aria-hidden="true"></i> <%= address.address%></p> 
+
+</div>

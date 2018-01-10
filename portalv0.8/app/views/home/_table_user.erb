@@ -1,0 +1,26 @@
+    <%= will_paginate @customers %>
+    <% @customers.each do |customer| %>
+      <tr>
+        <td><%= customer.n_socio %></td>
+        <td><%= customer.apellido %>, <%= customer.nombre %></td>
+        <% customer.addresses.each do |direccion| %>
+          <% if (direccion.address)%>
+             <td><%= direccion.address %></td>
+          <%end%>
+        <%end%>
+        <td>
+
+        <% if customer.estado ==1%>
+          <i class="fa fa-circle status_1" aria-hidden="true"></i>
+        <%end%>
+        <% if customer.estado ==2%>
+          <i class="fa fa-circle status_2" aria-hidden="true"></i>
+        <%end%>
+        <% if customer.estado ==3%>
+          <i class="fa fa-circle status_3" aria-hidden="true"></i>
+        <%end%>
+         </td>
+
+      </tr>
+    <% end %>
+    <%= will_paginate @customers %>

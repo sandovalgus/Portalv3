@@ -1,0 +1,19 @@
+<div class="container">
+	<h3>Importar Socios</h3>
+		<div class="col-md-6">
+			<div class="row">
+				<% flash.each do |key, val| %>
+					<div class="alert alert-danger alert-dismissable">
+						<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+						<strong>Atenci&oacuten!</strong> <%= val %> 
+					</div>
+				<% end %>
+			</div>
+			<div class="jumbotron">
+				<%= form_tag import_customers_path, multipart:true do %>
+				<%= file_field_tag :file %>
+				<%= submit_tag "Importar", class:"btn btn-default" %>
+				<% end %>
+			</div>
+		</div>
+</div>

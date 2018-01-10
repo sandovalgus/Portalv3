@@ -1,0 +1,155 @@
+
+<div class="container">
+
+<div class="banner">
+	 <h2>Clientes</h2>
+</div>
+ 
+<div class="row">
+  <div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="map-system map-system-down floating-map">
+      <div id="reloadmap" class="reloadmap btn-undo" title="Recargar mapa">
+        <i class="fa fa-undo" aria-hidden="true"></i>
+      </div>
+      <div id="map" class="map"></div>
+    </div> 
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+
+Search: <input id="search" name="search" type="text" autocomplete="off" title="Search location, company, description..." />  
+
+  </div>
+</div>                                                                                
+  <div class="table-responsive banner">
+
+  <%= will_paginate @customers %>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Num. de Socio</th>
+        <th>Apellido - Nombre</th>
+        <th>Dirección</th>
+        <th>Estado</th>      
+      </tr>
+    </thead>
+    <tbody>
+      <% @customers.each do |customer| %>
+        <tr>
+          <td><%= customer.n_socio %></td>
+          <td><%= customer.apellido %>, <%= customer.nombre %></td>
+          <% customer.addresses.each do |direccion| %>
+            <% if (direccion.address)%>
+               <td><%= direccion.address %></td>
+            <%end%>
+          <%end%>
+          <td>
+
+          <% if customer.estado ==1%>
+            <i class="fa fa-circle status_1" aria-hidden="true"></i>
+          <%end%>
+          <% if customer.estado ==2%>
+            <i class="fa fa-circle status_2" aria-hidden="true"></i>
+          <%end%>
+          <% if customer.estado ==3%>
+            <i class="fa fa-circle status_3" aria-hidden="true"></i>
+          <%end%>
+           </td>
+
+        </tr>
+      <% end %>
+
+    </tbody>
+  </table>
+  <%= will_paginate @customers %> 
+  </div>
+
+
+
+
+</div>
+
+
+
+<script type="text/javascript">
+  // viewZonesAll(<%=raw @polyjson %>, 1);}
+  actualizado = false;
+  $(document).ready(function() {
+     viewZonesAll(<%=raw @polyjson %>, 1);
+     initMap(<%=raw @map_hash.to_json %>, 1);
+
+  });
+   
+  $(function(){
+      function funcAvisa(){
+
+        $.ajax({
+           url: "/customers/check",
+           type: "POST",
+           //data: { "nombre_zona":nombre_zona },
+           dataType: "json",
+           success: function(data) {
+              //console.log(data);
+
+              if (data == true) {
+                new PNotify({
+                  title: 'Éxito',
+                  text: 'Los clientes han sido importados correctamente.'
+                });
+
+
+                $.ajax({
+                  url: "/customers/checkok",
+                  type: "POST",
+                  //data: { "nombre_zona":nombre_zona },
+                  dataType: "json",
+                });
+
+
+
+              } else {
+               /*console.log(data);
+               console.log("sin novedades...");*/
+              }
+
+
+
+             }
+           });
+  
+      /********************/
+
+            }
+      setInterval(funcAvisa,10000);
+    });
+// mapsMarkerZones(<%=raw @map_hash.to_json  %>,<%=raw @polyjson %>, 1);
+  $('.reloadmap').click( function() {
+    viewZonesAll(<%=raw @polyjson %>, 1);
+    initMap(<%=raw @map_hash.to_json %>, 1);
+  });
+
+  $('#mapa').click( function() {
+    if ($( ".map-system" ).hasClass( "map-system-down" )) {
+      $('.map-system').removeClass('map-system-down');        
+      $('.map-system').addClass('animated bounceOutLeft');      
+    };
+
+
+    if ( $( ".map-system" ).hasClass( 'animated bounceOutLeft' )) {
+
+      $('.map-system').removeClass('animated bounceOutLeft');
+      $('.map-system').addClass('animated bounceInLeft');
+      $('.reloadmap').click();
+
+    } else if ( $( ".map-system" ).hasClass( 'animated bounceInLeft' ) ) {
+
+      $('.map-system').removeClass('animated bounceInLeft');
+      $('.map-system').addClass('animated bounceOutLeft');
+    } 
+    
+  });
+
+
+</script>

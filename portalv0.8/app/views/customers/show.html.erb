@@ -1,0 +1,60 @@
+<div class="container">
+
+<div class="banner">
+		<!--  <div class="pull-right"> -->
+		<!-- accion editar -->
+		<%= link_to '<i class="fa fa-pencil-square-o" aria-hidden="true"></i> Editar'.html_safe, edit_customer_path(@customer),  class: 'btn btn-edit-show'%>  <span>
+		<!-- accion volver -->
+		<%= link_to '<i class="fa fa-undo" aria-hidden="true"></i> Volver'.html_safe, customers_path,  class: 'btn btn-undo'%>  <span>
+
+
+		<!-- 	 </div> -->
+	</div>
+
+	<div class="banner">
+
+		<div class="row">
+			<div class="col-md-6 col-xs-12">
+					<div class="form-group">
+					<strong>Número de socio:</strong>
+					<%= @customer.n_socio %>
+				</div>
+				<div class="form-group">
+					<strong>Socio:</strong>
+					<%= @customer.apellido %>, <%= @customer.nombre %>
+				</div>
+				<div class="form-group">
+					<strong>Direccion:</strong>
+					<% @customer.addresses.each do |direccion| %>
+						<%= direccion.address %>
+					<%end%>
+				</div>
+				<div class="form-group">
+					<strong>Estado:</strong>
+					<% if @customer.estado ==1%>
+						<i class="fa fa-circle status_1" aria-hidden="true"></i>
+					<%end%>
+					<% if @customer.estado ==2%>
+						<i class="fa fa-circle status_2" aria-hidden="true"></i>
+					<%end%>
+					<% if @customer.estado ==3%>
+						<i class="fa fa-circle status_3" aria-hidden="true"></i>
+					<%end%>
+				</div>
+			</div>
+
+			<div class="col-md-6 col-xs-12">
+				<div class="map_mini">
+					<div id="map" class="map"></div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</div>
+
+
+
+<script type="text/javascript">
+createMap(<%=raw @map_hash.to_json %>, 2);
+</script>

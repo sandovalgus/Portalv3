@@ -1,0 +1,33 @@
+<div class="container">	
+<div class="banner">
+   <h2>Editar Zona</h2>
+</div>
+<%= render 'form', zone: @zone %>
+
+<input id="id"  type="text">
+
+
+
+
+  <div class="banner"> 
+
+	<div class="row">
+		<div class="col-md-9 col-sm-9 col-xs-9"> 
+
+			<button  id="guardarEdicionZona" class="btn btn-default pull-right">Guardar Cambios Zona</button>
+			 <button id="borrar" class="btn">Limpiar</button>
+			 
+			<button id="btnmarcar" class="btn btn-default pull-right">Marcar zona</button>
+		</div>
+	</div>
+</div>
+<%= link_to 'Show', @zone %> |
+<%= link_to 'Back', zones_path %>
+
+<script type="text/javascript">
+document.getElementById("id").value = <%= @zone.id  %>;
+$('#btnmarcar').attr("disabled", true);
+$('#guardarEdicionZona').attr("disabled", false);
+  createMapZone(<%=raw @polyjson %>);
+</script> 
+</div>

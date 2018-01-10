@@ -1,0 +1,85 @@
+<div class="banner">
+<%puts "******editando customer****"%>
+<%puts params.inspect%>
+<%= form_with(model: customer, local: true) do |form| %>
+  <% if customer.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(customer.errors.count, "error") %> prohibited this customer from being saved:</h2>
+
+      <ul>
+      <% customer.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+
+<div class="row">
+  <div class="col-md-4 col-xs-12">
+      <div class="form-group">
+            <%= form.label :n_socio, "Numero de socio:" %>
+            <%= form.text_field :n_socio,autofocus: true,:required => true, :class=>"form-control input-sm" %>  
+      </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6 col-xs-12">
+    <div class="form-group">
+
+    <%= form.label :nombre, "Nombre:" %>
+            <%= form.text_field :nombre,autofocus: true,:required => true, :class=>"form-control input-sm" %>  
+    </div>
+
+  </div>
+    <div class="col-md-6 col-xs-12">
+    <div class="form-group">
+      <%= form.label :apellido, "Apellido:" %>
+                <%= form.text_field :apellido,autofocus: true,:required => true, :class=>"form-control input-sm" %>  
+          </div>    
+    </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12 col-xs-12">
+    <div class="form-group">
+          <%= form.fields_for :addresses do |ubicacion|%>
+              <%=ubicacion.label :address, "Direccion:"%><br/>
+              <%= ubicacion.text_area :address, class: "form-control input-sm" ,rows: 2%>
+               <%= ubicacion.hidden_field :latitude%>
+                <%= ubicacion.hidden_field :longitude%>
+          <%end%>
+    </div>
+  </div>
+</div>
+
+<% if params[:action] == 'edit'%>
+
+      <div class="col-md-12 col-xs-12">
+        <!-- <div class="map_mini"> -->
+          <div id="map" class="map"></div>
+        <!-- </div> -->
+      </div>
+<%end%>
+
+  <div class="actions">
+           <%= button_tag(type: 'submit', class: "btn btn-primary") do %>
+        <i class="fa fa-floppy-o " aria-hidden="true"></i>
+         Guardar
+        <% end %>
+
+  </div>
+<% end %>
+
+</div>
+
+<script type="text/javascript">
+editCustomerMap(<%=raw @map_hash.to_json %>, 2);
+</script>
+
+
+
+
+
+
+

@@ -1,0 +1,38 @@
+  <div class="banner"> 
+    <div class="row">
+      <div class="col-md-3 col-sm-3 col-xs-3">
+          <%= form_with(model: zone, local: true) do |form| %>
+
+
+          <div class="field">
+            <%= form.label :nombre_zona,class: "control-label" %>
+            <%= form.text_field :nombre_zona, id: :zone_nombre_zona, class: "form-control" %>
+          </div>
+          <br>
+          <div class="form-group">
+            <label for="sel1">Color de la zona:</label>
+            <select class="form-control" id="zone_color">
+              <option value="0099e5">Azul</option>
+              <option value="ff4c4c">Rojo</option>
+              <option value="34bf49">Verde</option>
+            </select>
+          </div>
+          <br />
+
+      </div>
+        <div class="col-md-9 col-sm-9 col-xs-9">
+            <div class="map-system-zone">
+                <div id="map_zone" class="map"></div>
+            </div> 
+
+        </div>
+    </div>
+
+<% end %>
+
+</div> 
+
+
+
+
+
