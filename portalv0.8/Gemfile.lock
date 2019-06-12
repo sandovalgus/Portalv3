@@ -1,4 +1,15 @@
 GIT
+  remote: https://github.com/plataformatec/devise
+  revision: 4ab54943adcfc9ad72ffcb028cf2dd29f991eade
+  specs:
+    devise (4.6.2)
+      bcrypt (~> 3.0)
+      orm_adapter (~> 0.1)
+      railties (>= 4.1.0, < 6.0)
+      responders
+      warden (~> 1.2.3)
+
+GIT
   remote: https://github.com/sinatra/sinatra.git
   revision: 89cbd96866355729bb347a76ce601b98c3ff579b
   specs:
@@ -55,7 +66,7 @@ GEM
     arel (8.0.0)
     autoprefixer-rails (7.1.5)
       execjs
-    bcrypt (3.1.11)
+    bcrypt (3.1.13)
     bindex (0.5.0)
     bootstrap-sass (3.3.7)
       autoprefixer-rails (>= 5.2.1)
@@ -81,12 +92,6 @@ GEM
     concurrent-ruby (1.0.5)
     connection_pool (2.2.1)
     crass (1.0.2)
-    devise (4.3.0)
-      bcrypt (~> 3.0)
-      orm_adapter (~> 0.1)
-      railties (>= 4.1.0, < 5.2)
-      responders
-      warden (~> 1.2.3)
     erubi (1.7.0)
     execjs (2.7.0)
     ffi (1.9.18)
@@ -162,9 +167,9 @@ GEM
     rb-inotify (0.9.10)
       ffi (>= 0.5.0, < 2)
     redis (4.0.1)
-    responders (2.4.0)
-      actionpack (>= 4.2.0, < 5.3)
-      railties (>= 4.2.0, < 5.3)
+    responders (2.4.1)
+      actionpack (>= 4.2.0, < 6.0)
+      railties (>= 4.2.0, < 6.0)
     ruby_dep (1.5.0)
     rubyzip (1.2.1)
     sass (3.5.2)
@@ -231,7 +236,7 @@ DEPENDENCIES
   byebug
   capybara (~> 2.13)
   coffee-rails (~> 4.2)
-  devise
+  devise!
   font-awesome-sass (~> 4.7.0)
   geocoder
   gmaps4rails
@@ -256,4 +261,4 @@ DEPENDENCIES
   will_paginate (~> 3.0)
 
 BUNDLED WITH
-   1.15.4
+   1.17.1
